@@ -1,0 +1,182 @@
+#include <LiquidCrystal.h>
+#include <Keypad.h>
+
+// LCD setup (adjust pins as per your wiring)
+LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
+
+// Keypad setup
+const byte ROWS = 4;
+const byte COLS = 3;
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+byte rowPins[ROWS] = {7, 6, 5, 4};
+byte colPins[COLS] = {3, 2, 1};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// Global variables
+int patientAge = 0;
+int patientSymptom = 0;
+int symptomSeverity = 0;
+
+unsigned long previousMillis = 0;
+const long interval_10s = 10000;
+const long interval_19s = 19000;
+
+enum State {
+  GREETING, WAIT_FOR_HASH, ENTER_AGE,
+  PATIENT_SYMPTOMS_INITIAL, PATIENT_SYMPTOMS_1, PATIENT_SYMPTOMS_2,
+  PATIENT_SYMPTOMS_3, SHOW_SEVERITY_INFO, WAIT_FOR_SEVERITY_INPUT,
+  DISPLAY_ROOM, GOODBYE, RESET_SYSTEM
+};
+
+State currentState = GREETING;
+
+void setup() {
+  lcd.begin(16, 2);
+  Serial.begin(9600);
+}
+
+void loop() {
+  char key = keypad.getKey();
+
+  switch (currentState) {
+    case GREETING:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Hello, welcome");
+      lcd.setCursor(0, 1);
+      lcd.print("Press '#' to go");
+      currentState = WAIT_FOR_HASH;
+      break;
+
+    case WAIT_FOR_HASH:
+      if (key == '#') {
+        lcd.clear();
+        lcd.print("Enter age:");
+        patientAge = 0;
+        currentState = ENTER_AGE;
+      }
+      break;
+
+    case ENTER_AGE:
+      if (key >= '0' && key <= '9') {
+        lcd.print(key);
+        patientAge = patientAge * 10 + (key - '0');
+      } else if (key == '#') {
+        lcd.clear();
+        lcd.print("Patient symptoms");
+        previousMillis = millis();
+        currentState = PATIENT_SYMPTOMS_INITIAL;
+      } else if (key == '*') {
+        lcd.clear();
+        lcd.print("Enter age again:");
+        patientAge = 0;
+      }
+      break;
+
+    case PATIENT_SYMPTOMS_INITIAL:
+      if (millis() - previousMillis >= interval_10s) {
+        lcd.clear();
+        lcd.print("Injury=1 Fever=2");
+        previousMillis = millis();
+        currentState = PATIENT_SYMPTOMS_1;
+      }
+      break;
+
+    case PATIENT_SYMPTOMS_1:
+      if (key >= '1' && key <= '4') {
+        patientSymptom = key - '0';
+        currentState = SHOW_SEVERITY_INFO;
+      } else if (millis() - previousMillis >= interval_19s) {
+        lcd.setCursor(0, 1);
+        lcd.print("Spec Cond=3");
+        previousMillis = millis();
+        currentState = PATIENT_SYMPTOMS_2;
+      }
+      break;
+
+    case PATIENT_SYMPTOMS_2:
+      if (key >= '1' && key <= '4') {
+        patientSymptom = key - '0';
+        currentState = SHOW_SEVERITY_INFO;
+      } else if (millis() - previousMillis >= interval_10s) {
+        lcd.clear();
+        lcd.print("Breath Diff=4");
+        previousMillis = millis();
+        currentState = PATIENT_SYMPTOMS_3;
+      }
+      break;
+
+    case PATIENT_SYMPTOMS_3:
+      if (key >= '1' && key <= '4') {
+        patientSymptom = key - '0';
+        currentState = SHOW_SEVERITY_INFO;
+      }
+      break;
+
+    case SHOW_SEVERITY_INFO:
+      lcd.clear();
+      lcd.print("Severity 1 to 9");
+      delay(2000);
+      lcd.clear();
+      lcd.print("1-3: Mild, 4-6:Urg");
+      lcd.setCursor(0,1);
+      lcd.print("7-9: Emerg.");
+      delay(3000);
+      lcd.clear();
+      lcd.print("Enter severity:");
+      symptomSeverity = 0;
+      currentState = WAIT_FOR_SEVERITY_INPUT;
+      break;
+
+    case WAIT_FOR_SEVERITY_INPUT:
+      if (key >= '1' && key <= '9') {
+        symptomSeverity = key - '0';
+        currentState = DISPLAY_ROOM;
+      }
+      break;
+
+    case DISPLAY_ROOM:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      if (symptomSeverity >= 7 || 
+          (patientAge < 10 && symptomSeverity >= 5) ||
+          (patientAge > 50 && symptomSeverity >= 4)) {
+        lcd.print("Block 1 Room 1");
+      } else {
+        switch (patientSymptom) {
+          case 1: lcd.print("Block 1 Room 7"); break;
+          case 2: lcd.print("Block 1 Room 8"); break;
+          case 3: lcd.print("Block 1 Room 9"); break;
+          case 4: lcd.print("Block 1 Room10"); break;
+          default: lcd.print("See reception"); break;
+        }
+      }
+      previousMillis = millis();
+      currentState = GOODBYE;
+      break;
+
+    case GOODBYE:
+      if (millis() - previousMillis >= interval_10s) {
+        lcd.clear();
+        lcd.print("Have a great day");
+        previousMillis = millis();
+        currentState = RESET_SYSTEM;
+      }
+      break;
+
+    case RESET_SYSTEM:
+      if (millis() - previousMillis >= interval_10s) {
+        patientAge = 0;
+        patientSymptom = 0;
+        symptomSeverity = 0;
+        currentState = GREETING;
+      }
+      break;
+  }
+}
