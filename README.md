@@ -1,4 +1,4 @@
-# SMART_HOSPITAL TRIAGE AND QUE MAMANGEMENT SYSTEM
+# SMART_HOSPITAL TRIAGE AND QUE MANGEMENT SYSTEM
 
 A system developed to manage and sort patients to mitigate queuing in hospital facilities.
 The system does that by taking specific patient entry like symptom and type of ailment also severity and with the aid of an algorithm 
