@@ -1,12 +1,12 @@
 # sMART_HOSPITAL TRIAGE AND QUE MAMANGEMENT SYSTEM
 
-A SYSTEM DEVELOPED TO MANAGE AND SORT PATIENTS TO MITIGATE CROWDING AND QUEING IN HOSPITAL FACILITIES .
-IT DOES THAT BY TAKING SPECIFIC PATIENT ENTRY FROM SYMPTOM AND TYPE OF AILMENT  ALSO SEVERITY AND WITH THE AID OF 
-AN ALGORITHM THE PATIENT IS REFFERED TO THE MOST PREFERABLE TREATMENT FACILITY IN A GVEN HOSPITAL.
-THE SIMULATION MODEL HAS A 4X3 MATRIX KEYPAD FOR PATIENT INPUT , 16X2 LCD FOR DISPLAY AND AN ARDUINO FOR THE MICROCONTROLLLER.
+A sytem deleloped to manage and sort patients to mitigate queuing in hospital facilities.
+it does that by taking specific patient entry like symptom and type of ailment also severity and with the algorithm 
+the patient is reffered to the most available and preferable department or facility  in a given hospital.
+the simulation model has a 4x3 matrix for patient input , 16x2 LCD for display and an arduino for the microcontroller.
 
-NOTE THE CODE HAS BEEN UPDATED FOR KEYPAD AND LCD DIPLAY CONFIGURATION , RUN PROTEUS SIMULATOR USING 
-THE HEX FILE FROM UPDATED CODE.
+
+NOTE the code has been updated for keypad and LCD display configuration , run proteus simulator using the hex file from updated code.
 
 ## MEMBERS
 1.JAVAN OTIENO
