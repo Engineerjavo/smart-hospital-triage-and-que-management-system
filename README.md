@@ -8,8 +8,9 @@ Simulation model has a 4x3 matrix keypad for patient input , 16x2 LCD for displa
 
 NOTE  the code has been updated for keypad and LCD display configuration , run proteus simulator using the hex file from updated code.
 
-## MEMBERS
-1.JAVAN OTIENO
-2.DENNIS SURI
-3.PATRICK KIMANI
+## Collaborators
+1. Masika - Supervisor
+2. Javan Otieno - Team Lead
+3. Dennis Muthuri
+4. Patrick Kimani
 
